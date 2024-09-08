@@ -5,11 +5,29 @@ export default function ReportIssueScreen() {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
 
-  const handleSubmit = () => {
-    // For now, we'll just alert the user with the report details
-    Alert.alert('Issue Reported', `Description: ${description}\nLocation: ${location}`);
-    
-    // Ideally, you'd send the report to a backend server here
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description,
+          location,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.status === 201) {
+        Alert.alert('Success', 'Issue reported successfully');
+      } else {
+        Alert.alert('Error', 'Failed to report the issue');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong');
+    }
   };
 
   return (
